@@ -1,74 +1,82 @@
 import streamlit as st
 from PIL import Image
 
-st.set_page_config(page_title="PropertyPost AI", layout="wide")
+st.set_page_config(page_title="PropertyPost AI", layout="centered")
 st.title("📱 PropertyPost AI")
-st.markdown("*Instagram Reels - Screen Record Ready*")
+st.markdown("*Instagram Reel Generator - Record & Post*")
 
-# Sidebar
-st.sidebar.header("🏢 Agency")
-agent_name = st.sidebar.text_input("Name", "Prime Properties")
+# Compact branding
+agent_name = st.text_input("🏢 Agency", "Prime Properties", key="agency")
 
-# Simple form - NO number input errors
-st.subheader("Reel Generator")
-col1, col2, col3 = st.columns(3)
-with col1:
-    address = st.text_input("Address", "123 High St, London")
-with col2:
-    price = st.text_input("Price", "£850,000")  # Text = no errors
-with col3:
-    beds = st.selectbox("Beds", [1,2,3,4,5])
+# Ultra-simple form
+address = st.text_input("🏠 Address", "123 High St, London", key="addr")
+price = st.text_input("💰 Price", "£850,000", key="price")
+beds = st.selectbox("🛏️ Beds", ["1", "2", "3", "4", "5"], key="beds")
+feature = st.text_input("✨ Feature", "South garden", key="feat")
 
-feature = st.text_input("Feature", "South garden")
+# Single photo
+photo = st.file_uploader("📸 Photo", type=['jpg','jpeg','png'])
 
-# Photo
-photo = st.file_uploader("Hero Photo", type=['jpg','jpeg','png'])
-
-# Generate
-if st.button("🎥 CREATE REEL", type="primary", use_container_width=True):
+if st.button("🎥 GENERATE REEL", type="primary", use_container_width=True):
+    st.markdown("---")
+    
     if photo:
-        col1, col2 = st.columns([1,3])
-        with col1:
-            img = Image.open(photo).resize((280, 480))
-            st.image(img, use_column_width=True)
+        # Hero image (centered)
+        img = Image.open(photo).resize((400, 600), Image.Resampling.LANCZOS)
+        st.image(img, caption="Hero shot", use_container_width=True)
         
-        with col2:
-            st.markdown(f"""
+        # SINGLE COLUMN REEL ANIMATION
+        st.markdown(f"""
+        <div style="max-width: 380px; margin: 30px auto; text-align: center;">
             <style>
-            @keyframes boom {{0% {{transform:scale(0.2);opacity:0;}}70% {{transform:scale(1.3);}}100% {{transform:scale(1);opacity:1;}}}}
-            @keyframes slide {{0% {{transform:translateX(100%);opacity:0;}}100% {{transform:translateX(0);opacity:1;}}}}
-            .reel {{width:360px;height:640px;background:linear-gradient(#0f0f23,#1a1a3e);border-radius:28px;padding:50px 25px;margin:auto;box-shadow:0 25px 50px #0004;}}
-            .price {{font-size:95px;color:#fff;font-weight:800;text-align:center;margin:25px 0;animation:boom 2s ease-out;text-shadow:2px 2px 8px #0008;letter-spacing:2px;}}
-            .beds {{font-size:65px;color:#00d4ff;font-weight:700;text-align:center;margin:15px 0;animation:slide 1.5s 0.7s both;}}
-            .feat {{font-size:36px;color:#fff;text-align:center;margin:20px 0;}}
-            .agency {{font-size:32px;color:#ffd700;font-weight:700;text-align:center;margin:15px 0;text-shadow:0 0 15px #ffd70050;}}
-            .cta {{background:linear-gradient(45deg,#ff4757,#ff6b7a);color:white;border:none;padding:15px 35px;font-size:24px;font-weight:700;border-radius:35px;cursor:pointer;margin:20px auto;display:block;box-shadow:0 8px 25px #ff475740;}}
+            @keyframes explode {{0% {{transform:scale(0.1);opacity:0;}}70% {{transform:scale(1.2);}}100% {{transform:scale(1);opacity:1;}}}}
+            @keyframes slidein {{0% {{transform:translateX(100%);opacity:0;}}100% {{transform:translateX(0);opacity:1;}}}}
+            .reel-bg {{background:linear-gradient(135deg,#1e1e3f 0%,#2a1d4e 50%,#0f0f23 100%);border-radius:25px;padding:45px 25px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,0.7);}}
+            .price-big {{font-size:85px;font-weight:900;color:#fff;line-height:0.9;margin:20px 0;text-shadow:0 3px 12px #0008;animation:explode 2s ease-out;letter-spacing:2px;}}
+            .beds-anim {{font-size:55px;color:#00d9ff;font-weight:800;margin:12px 0;animation:slidein 1.3s 0.6s both;}}
+            .feat-glow {{font-size:32px;color:#fff;font-weight:600;margin:18px 0;text-shadow:0 0 20px #00d9ff40;}}
+            .agency-shine {{font-size:28px;color:#ffd700;font-weight:800;margin:15px 0;text-shadow:0 0 18px #ffd70060;}}
+            .view-btn {{background:linear-gradient(45deg,#ff4d4d,#ff7a7a);color:white;border:none;padding:14px 32px;font-size:22px;font-weight:800;border-radius:35px;cursor:pointer;margin:25px auto;display:block;box-shadow:0 8px 25px #ff4d4d40;transition:all 0.3s;}}
+            .view-btn:hover {{transform:translateY(-3px);box-shadow:0 12px 35px #ff4d4d60;}}
             </style>
-            <div class="reel">
-                <div class="price">{price}</div>
-                <div class="beds">{beds} BED</div>
-                <div class="feat">{feature}</div>
-                <div class="agency">{agent_name}</div>
-                <button class="cta">📞 VIEW NOW</button>
+            <div class="reel-bg">
+                <div class="price-big">{price}</div>
+                <div class="beds-anim">{beds} BED</div>
+                <div class="feat-glow">{feature}</div>
+                <div class="agency-shine">{agent_name}</div>
+                <button class="view-btn">📞 VIEW NOW</button>
             </div>
-            """, unsafe_allow_html=True)
-            
-            st.success("🎉 **REEL READY!**")
-            st.info("""
-            **📱 Instagram:**
-            1. Screen Record (15s)
-            2. Reels → Upload recording  
-            3. Copy caption → Post!
-            """)
-            
-            caption = f"""🏠 {address} | {price} | {beds} Beds
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.success("🎉 **INSTAGRAM REEL READY!**")
+        st.markdown("""
+        **📱 3-Step Post:**
+        1. **Screen Record** (15 seconds above)
+        2. Instagram **Reels** → Upload video  
+        3. **Copy caption** → Done!
+        
+        **💡 Add trending music for 10x views**
+        """)
+        
+        caption = f"""🚨 {address} | {price} | {beds} Bed
 {feature}
 
-📲 {agent_name}
-#Property #Reels #London #ForSale"""
-            st.code(caption)
+📲 {agent_name} | Book today!
+#PropertyForSale #London #Reels #EstateAgent"""
+        
+        st.code(caption, language=None)
+        
+        # Record reminder
+        st.balloons()
+        
     else:
-        st.warning("📸 Photo needed")
+        st.error("📸 **Upload 1 photo first**")
 
-st.markdown("---")
-st.caption("*Record screen → Post → Sell houses!*")
+# Footer mockup
+st.markdown("""
+<div style="text-align:center;margin-top:40px;padding:20px;background:#f8f9fa;border-radius:15px;">
+    <div style="font-size:28px;color:#666;margin-bottom:10px;">📱 Instagram Reel Preview</div>
+    <div style="font-size:14px;color:#999;">Screen record the animation above → Post → Sell!</div>
+</div>
+""", unsafe_allow_html=True)
